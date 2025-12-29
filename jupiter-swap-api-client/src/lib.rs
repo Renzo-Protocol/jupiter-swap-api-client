@@ -76,18 +76,14 @@ impl JupiterSwapApiClient {
 
     pub async fn quote(&self, quote_request: &QuoteRequest) -> Result<QuoteResponse, ClientError> {
         let url = format!("{}/quote", self.base_path);
-        println!("url: {}", url);
         let extra_args = quote_request.quote_args.clone();
         let internal_quote_request = InternalQuoteRequest::from(quote_request.clone());
         let request_builder = Client::new()
             .get(url)
             .query(&internal_quote_request)
             .query(&extra_args);
-        println!("request_builder: {:?}", request_builder);
         let request_builder = self.add_api_key_header(request_builder);
-        println!("request_builder: {:?}", request_builder);
         let response = request_builder.send().await?;
-        println!("response: {:?}", response);
         check_status_code_and_deserialize(response).await
     }
 
